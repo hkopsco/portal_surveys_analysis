@@ -24,35 +24,23 @@ surveys <- read_csv("data/portal_data_joined.csv")
 
 
 ```{r}
-#Comparison of mean weight among species
+#Species abundance per plot
 
-surveys_mw <- surveys %>%
-    filter(!is.na(weight)) %>%
-    group_by(genus, species) %>%
-    summarize(mean_weight = mean(weight))
-surveys_mw
+
 ```
 
 ```{r}
-#Comparison of mean weight of all species over time
+#Species abundance per season
 
-surveys_mwy <- surveys %>%
-    filter(!is.na(weight)) %>%
-    group_by(genus, species, year) %>%
-    summarize(mean_weight = mean(weight))
-surveys_mwy
+
 ```
 
 ```{r}
-#Plot of mean species weights 
-ggplot(data = surveys_mwy, aes(genus, species, mean_weight))+  
-  geom_jitter(aes(color=as.factor(genus)))+ geom_boxplot() + geom_point()
+# Species abundance per year
+
 ```
 
-```{r}
-#Student's t test comparing male and female weights
-t.test(surveys$sex, surveys$weight)
-```
+
 
 ##=== Eren's part
 
@@ -71,6 +59,8 @@ p1
 # summarise the weights
 
 mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
+
+mean_weights_per_species
 
 ```
 
