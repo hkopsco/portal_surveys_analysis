@@ -54,4 +54,23 @@ ggplot(data = surveys_mwy, aes(genus, species, mean_weight))+
 t.test(surveys$sex, surveys$weight)
 ```
 
+##=== Eren's part
+
+#Avarage weight per species
+
+```{r include=FALSE}
+
+clean_weight <- surveys %>% filter(!is.na(weight))
+
+all_weights <- clean_weight %>% select(weight, species_id) %>% group_by(species_id)
+
+p1 <- ggplot(all_weights, aes(x=species_id, y=weight, col = species_id)) + geom_jitter(alpha=.1,aes(color=as.factor(species_id))) + geom_boxplot() + labs(title="Mean weights per species",x="Species ID", y = "Weight") + theme_minimal()
+
+p1
+
+# summarise the weights
+
+mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
+
+```
 
