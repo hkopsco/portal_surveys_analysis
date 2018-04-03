@@ -2,14 +2,18 @@
 title: "Untitled"
 author: "Kopsco"
 date: "4/3/2018"
-output: pdf_document
+output:
+  html_document: default
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(include = FALSE)
 ```
 
-```{r, include = FALSE }
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(tidyverse)
 library(dbplyr)
 library(ggplot2)
@@ -24,7 +28,7 @@ precip <- read_csv("data/portal_precipitation_19801989.csv")
 
   The Portal, AZ rodent dataset provides information on all rodents sampled among 24 experimental plots in the Chihuahan Desert between 1977 and 2002. The following plot examines the total number of species over the entire observation time. While there is considerable change in total abundance among years, the most abundant species remained relatively stable. *C. baileyi* and *D. merriami* were the most abundant species present, however C. baileyi population exploded only in the late 1990s as *D. merriami*'s abundance began to decline.
   
-```{r, include = FALSE}
+```{r echo=FALSE}
 total_ann_abund_spp <-surveys %>%
                 group_by(year, genus, species) %>%
                 tally() 
@@ -43,7 +47,7 @@ ggplot(data = total_ann_abund_spp, aes(x = year, y = n, color = species)) +
 
 Overall, the average total number of species increased over the study period. The total average rodent population experienced a slow decline starting in the late 1980s, and then a sharp resurgence in the mid 1990s. 
 
-```{r, include = FALSE}
+```{r echo=FALSE}
 
 mean_yearly_abund_spp <-surveys %>%
                 group_by(year, species) %>%
@@ -62,13 +66,12 @@ ggplot(data = mean_yearly_abund_spp, aes(x = year, y = mean_abundance_yr)) +
 
 Most plots appear to contain fewer than 60 individuals of a particular species each year. However, *C. baileyi* and *D. merriami* exceed this threshold in several plots in various years. In particular, plot 4 had a surge of *D. merriami* in 1990, and *C. baileyi* increased in the late 1990s in plots 3, 6, 13, 18, 19, 20, 21, 22.
 
-```{r, Include = FALSE}
-
+```{r echo=FALSE}
 spabplot <- surveys %>%
   group_by(species, plot_id, year) %>%
   tally()
 
-ggplot(data = spabplot, aes(x = year, y = n, color = species)) +
+plot <- ggplot(data = spabplot, aes(x = year, y = n, color = species)) +
      geom_line() +
      facet_wrap(~ plot_id)+ theme(axis.text.x = element_text(colour = "grey20", size = 7, angle = 90,
      hjust = 0.5, vjust = 0.5),axis.text.y = element_text(colour = "grey20", size = 10),
@@ -76,11 +79,12 @@ ggplot(data = spabplot, aes(x = year, y = n, color = species)) +
      labs(title = "Abundance of species observed per experimental plot",
          x = "Year of observation",
          y = "Number of species") 
+plot
 ```
 
 Plot 4 appears to host the largest abundance of species of all plots.
 
-```{r, Include=FALSE}
+```{r echo=FALSE, Include=FALSE}
 
 plot_count_yr <- surveys %>%
                  group_by(year, species, plot_id) %>%
@@ -99,7 +103,7 @@ ggplot(data = plot_count_yr, aes(x = year, y = n)) +
 
 A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 5.559e-14).
 
-```{r Include = FALSE}
+```{r echo=FALSE}
 
 sp_abund <- surveys %>%
             group_by(plot_id, year, species) %>%
@@ -124,7 +128,7 @@ kruskal.test(species ~ plot_id, data = sp_abund)
 
 *C. baileyi* and *D. merriami* are the most abundant species for all experimental plots, but there is a lot of variance in their sample numbers throughout the years.
 
-```{r, include = FALSE}
+```{r echo=FALSE}
 
 most_abundant_species <- surveys %>%
     group_by(species, year, plot_id) %>%
@@ -153,7 +157,7 @@ ggplot(data = most_abundant_species, aes(x = species, y = n, group = species)) +
 
 There does not appear to be a significant relationship between the annual species abundance and the annual precipitation (p = 0.234).
 
-```{r, include=FALSE}
+```{r echo=FALSE}
 
 surveys_1980_1989 <- surveys %>%
   filter(year < 1989) %>%
@@ -178,7 +182,7 @@ plot(abund_precip)
 
 Likewise, there is no significant difference among sampling years and the amount of precipitation (p = 1).
 
-```{r, include=FALSE}
+```{r echo=FALSE}
 
 hist(precip_survey$precipitation)
 summary(precip_yr)
@@ -186,13 +190,10 @@ kruskal.test(precipitation ~ year, data = precip_survey)
 
 ```
 
-  
 
-##=== Eren's part
+Avarage weight per species:
 
-#Avarage weight per species
-
-```{r include=FALSE}
+```{r echo=FALSE}
 
 clean_weight <- surveys %>% filter(!is.na(weight))
 
@@ -201,17 +202,18 @@ all_weights <- clean_weight %>% select(weight, species_id) %>% group_by(species_
 p1 <- ggplot(all_weights, aes(x=species_id, y=weight, col = species_id)) + geom_jitter(alpha=.1,aes(color=as.factor(species_id))) + geom_boxplot() + labs(title="Mean weights per species",x="Species ID", y = "Weight") + theme_minimal()
 
 p1
+```
 
-# summarise the weights
-
+Summary the mean weights per species:
+```{r echo=FALSE}
 mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
 
 mean_weights_per_species
 ```
 
-##Choose top five most abundant species and compare mean size – hindfoot length and weight
+We choose top five most abundant species and compare mean hindfoot length and weight.
 
-```{r}
+```{r echo=FALSE}
 top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% filter(!is.na(weight)) %>% filter(!is.na(hindfoot_length)) %>% group_by(species_id) %>% tally()
 
 top_five_species <- top_five_species[order(top_five_species$n),]
@@ -234,9 +236,15 @@ a1$mean_weight <- a2$mean_weight
 
 means_for_top_five <- a1
 
-ggplot(data = means_for_top_five, 
+p2 <- ggplot(data = means_for_top_five, 
     aes(x=mean_weight, y=mean_hindfoot, color=species_id))+ geom_point() + theme_minimal()
 
+p2
+```
+
+Summary of the relatinship between species' mean weight between mean hindfoot length:
+
+```{r echo=FALSE}
 test1 <- glm(mean_weight ~ mean_hindfoot, data = means_for_top_five)
 summary(test1)
 
@@ -244,4 +252,6 @@ test1summary <- summary(test1)
 
 test1summary 
 ```
+
+There is not significant relationship between species' mean weight between mean hindfoot length (p = 0.00335).
 
