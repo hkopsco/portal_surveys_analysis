@@ -2,7 +2,9 @@
 title: "Portal_Survey"
 author: "Kopsco"
 date: "3/29/2018"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -179,7 +181,6 @@ top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% 
 top_five_species <- top_five_species %>% filter(species_id %in% c("RM", "DO", "PB", "PP", "DM"))
 
 top_five_species$species_id <- as.character(top_five_species$species_id)
-
 
 a1 <- top_five_species %>% group_by(species_id) %>% summarise(mean_hindfoot = round(mean(hindfoot_length),digits = 2))
 
