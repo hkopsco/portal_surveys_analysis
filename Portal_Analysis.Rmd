@@ -19,25 +19,124 @@ library(ggplot2)
 download.file("https://ndownloader.figshare.com/files/2292169",
               "data/portal_data_joined.csv")
 read_csv("data/portal_data_joined.csv")
+read_csv("data/portal_precipitation_19801989.csv")
 surveys <- read_csv("data/portal_data_joined.csv")
+precip <- read_csv("data/portal_precipitation_19801989.csv")
 ```
 
+## Heather's part
 
 ```{r}
-#Species abundance per plot
+# Mean species abundance per year
+yearly_abund_spp <-surveys %>%
+                group_by(year, species) %>%
+                tally() %>%
+                summarize(mean_abundance_yr = mean(n)) 
 
-
+ggplot(data = yearly_abund_spp, aes(x = year, y = mean_abundance_yr)) +
+     geom_line() + theme(axis.text.x = element_text(colour = "grey20", size = 9, angle = 90, hjust =      0.5, vjust = 0.5),axis.text.y = element_text(colour = "grey20", size = 10),
+     text=element_text(size = 16))+
+     labs(title = "Average number of species observed each year",
+         x = "Year of observation",
+         y = "Mean number of species") 
 ```
 
 ```{r}
-#Species abundance per season
+# Species abundance per plot
 
+spabplot <- surveys %>%
+  group_by(species, plot_id, year) %>%
+  tally()
 
+ggplot(data = spabplot, aes(x = year, y = n, color = species)) +
+     geom_line() +
+     facet_wrap(~ plot_id)+ theme(axis.text.x = element_text(colour = "grey20", size = 7, angle = 90,
+     hjust = 0.5, vjust = 0.5),axis.text.y = element_text(colour = "grey20", size = 10),
+     text=element_text(size = 11))+
+     labs(title = "Abundance of species observed per experimental plot",
+         x = "Year of observation",
+         y = "Number of species") 
+```
+```{r}
+# Total species abundance per plot
+species_count_yr <- surveys %>%
+                 group_by(year, species_id, plot_id) %>%
+                 tally()
+
+ggplot(data = species_count_yr, aes(x = year, y = n)) +
+    geom_line() +
+    facet_wrap(~ plot_id)+
+    theme(axis.text.x = element_text(colour = "grey20", size = 9, angle = 90, hjust = 0.5, vjust = 
+    0.5),axis.text.y = element_text(colour = "grey20", size = 10),
+    text=element_text(size = 16))+
+    labs(title = "Total abundance by experimental plot",
+         x = "Year of observation",
+         y = "Number of species") 
 ```
 
 ```{r}
-# Species abundance per year
+#Mean species abundance per plot
 
+sp_abund <- surveys %>%
+            group_by(plot_id, year, species) %>%
+            tally()
+
+mean_abund <- sp_abund %>%
+              group_by(plot_id, year) %>%
+              summarise(total_abundance = sum(n)) %>%
+              summarise(mean_abund = mean(total_abundance))
+
+ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
+    geom_boxplot(coef = 1.5) + theme(axis.text.x = element_text(colour = "grey20", size = 12, angle =     90, hjust = 0.5, vjust = 0.5), axis.text.y = element_text(colour = "grey20", size = 12),
+    text=element_text(size = 14)) +
+    geom_jitter(alpha = 0.3, color = "blue") +
+    labs(title = "Species abundance by experimental plot",
+         x = "Plot Number",
+         y = "Number of species")
+    
+```
+
+```{r}
+# Focus on the most abundant species present
+most_abundant_species <- surveys %>%
+    group_by(species, year, plot_id) %>%
+    tally() %>%
+    arrange(desc(n)) %>%
+    filter(n > 50) 
+
+ggplot(data = most_abundant_species, aes(x = year, y = n, color = species)) +
+    geom_line() +
+    facet_wrap(~ plot_id) +
+    theme(axis.text.x = element_text(colour = "grey20", size = 6, angle = 90, hjust = 0.5, vjust =  
+    0.5), axis.text.y = element_text(colour = "grey20", size = 10), text=element_text(size = 16))+
+        labs(title = "Most abundant species by experimental plot",
+         x = "Plot Number",
+         y = "Number of species") 
+
+ggplot(data = most_abundant_species, aes(x = species, y = n, group = species)) +
+    geom_boxplot(coef = 1.5)+
+    theme(axis.text.x = element_text(colour = "grey20", size = 12, angle = 90, hjust = 0.5, vjust = 
+    0.5), axis.text.y = element_text(colour = "grey20", size = 12), text=element_text(size = 14))+
+    geom_jitter(alpha = 0.3, color = "blue") +
+    labs(title = "Most abundance species for all experimental plots",
+         x = "Species",
+         y = "Species Abundance")
+
+
+```
+```{r}
+# Relationship between species abundance and precipitation
+
+surveys_1980_1989 <- surveys %>%
+  filter(year < 1989) %>%
+  filter(year > 1980)
+
+count_spp_yr <-surveys_1980_1989 %>%
+                group_by(year, species) %>%
+                tally() 
+
+precip_survey <- merge(count_spp_yr, precip) 
+  
 ```
 
 
