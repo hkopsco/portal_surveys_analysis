@@ -64,7 +64,7 @@ species_count_yr <- surveys %>%
                  tally()
 
 ggplot(data = species_count_yr, aes(x = year, y = n)) +
-    geom_line() +
+    geom_point() +
     facet_wrap(~ plot_id)+
     theme(axis.text.x = element_text(colour = "grey20", size = 9, angle = 90, hjust = 0.5, vjust = 
     0.5),axis.text.y = element_text(colour = "grey20", size = 10),
@@ -124,6 +124,7 @@ ggplot(data = most_abundant_species, aes(x = species, y = n, group = species)) +
 
 
 ```
+
 ```{r}
 # Relationship between species abundance and precipitation
 
@@ -160,6 +161,42 @@ p1
 mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
 
 mean_weights_per_species
+```
 
+##Choose top five most abundant species and compare mean size – hindfoot length and weight
+
+```{r}
+top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% filter(!is.na(weight)) %>% filter(!is.na(hindfoot_length)) %>% group_by(species_id) %>% tally()
+
+top_five_species <- top_five_species[order(top_five_species$n),]
+
+top_five_species <- top_five_species[c(20:24),]
+
+#RM, DO, PB, PP, DM
+
+top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% filter(!is.na(weight)) %>% filter(!is.na(hindfoot_length)) 
+
+top_five_species <- top_five_species %>% filter(species_id %in% c("RM", "DO", "PB", "PP", "DM"))
+
+top_five_species$species_id <- as.character(top_five_species$species_id)
+
+
+a1 <- top_five_species %>% group_by(species_id) %>% summarise(mean_hindfoot = round(mean(hindfoot_length),digits = 2))
+
+a2 <- top_five_species %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight), digits = 2))
+
+a1$mean_weight <- a2$mean_weight  
+
+means_for_top_five <- a1
+
+ggplot(data = means_for_top_five, 
+    aes(x=mean_weight, y=mean_hindfoot, color=species_id))+ geom_point() + theme_minimal()
+
+test1 <- glm(mean_weight ~ mean_hindfoot, data = means_for_top_five)
+summary(test1)
+
+test1summary <- summary(test1)
+
+test1summary 
 ```
 
