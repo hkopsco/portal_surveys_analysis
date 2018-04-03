@@ -33,20 +33,18 @@ summary(total_ann_abund_spp)
 top_species <- total_ann_abund_spp %>%
               group_by(genus, species, year) %>%
               arrange(desc(n))
-top_species              
 
 ggplot(data = total_ann_abund_spp, aes(x = year, y = n, color = species)) +
      geom_line() + theme(axis.text.x = element_text(colour = "grey20", size = 9, angle = 90, hjust =      0.5, vjust = 0.5),axis.text.y = element_text(colour = "grey20", size = 10),
      text=element_text(size = 10))+
      labs(x = "Year of observation",
          y = "Number of species")
-      fig.cap = "Total number of species observed each year"
 ```
 
 Overall, the average total number of species increased over the study period. The total average rodent population experienced a slow decline starting in the late 1980s, and then a sharp resurgence in the mid 1990s. 
 
 ```{r, include = FALSE}
-# Mean species abundance per year
+
 mean_yearly_abund_spp <-surveys %>%
                 group_by(year, species) %>%
                 tally() %>%
@@ -65,7 +63,6 @@ ggplot(data = mean_yearly_abund_spp, aes(x = year, y = mean_abundance_yr)) +
 Most plots appear to contain fewer than 60 individuals of a particular species each year. However, *C. baileyi* and *D. merriami* exceed this threshold in several plots in various years. In particular, plot 4 had a surge of *D. merriami* in 1990, and *C. baileyi* increased in the late 1990s in plots 3, 6, 13, 18, 19, 20, 21, 22.
 
 ```{r, Include = FALSE}
-# Species abundance per plot
 
 spabplot <- surveys %>%
   group_by(species, plot_id, year) %>%
@@ -84,7 +81,7 @@ ggplot(data = spabplot, aes(x = year, y = n, color = species)) +
 Plot 4 appears to host the largest abundance of species of all plots.
 
 ```{r, Include=FALSE}
-# Total species abundance per plot
+
 plot_count_yr <- surveys %>%
                  group_by(year, species, plot_id) %>%
                  tally()
@@ -103,7 +100,6 @@ ggplot(data = plot_count_yr, aes(x = year, y = n)) +
 A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 5.559e-14).
 
 ```{r Include = FALSE}
-#Mean species abundance per plot
 
 sp_abund <- surveys %>%
             group_by(plot_id, year, species) %>%
@@ -129,7 +125,7 @@ kruskal.test(species ~ plot_id, data = sp_abund)
 *C. baileyi* and *D. merriami* are the most abundant species for all experimental plots, but there is a lot of variance in their sample numbers throughout the years.
 
 ```{r, include = FALSE}
-# Focus on the most abundant species present
+
 most_abundant_species <- surveys %>%
     group_by(species, year, plot_id) %>%
     tally() %>%
@@ -158,7 +154,6 @@ ggplot(data = most_abundant_species, aes(x = species, y = n, group = species)) +
 There does not appear to be a significant relationship between the annual species abundance and the annual precipitation (p = 0.234).
 
 ```{r, include=FALSE}
-# Relationship between annual species abundance and annual precipitation
 
 surveys_1980_1989 <- surveys %>%
   filter(year < 1989) %>%
@@ -184,7 +179,7 @@ plot(abund_precip)
 Likewise, there is no significant difference among sampling years and the amount of precipitation (p = 1).
 
 ```{r, include=FALSE}
-# Relationship among precipitation and observation years
+
 hist(precip_survey$precipitation)
 summary(precip_yr)
 kruskal.test(precipitation ~ year, data = precip_survey)
@@ -212,6 +207,42 @@ p1
 mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
 
 mean_weights_per_species
+```
 
+##Choose top five most abundant species and compare mean size – hindfoot length and weight
+
+```{r}
+top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% filter(!is.na(weight)) %>% filter(!is.na(hindfoot_length)) %>% group_by(species_id) %>% tally()
+
+top_five_species <- top_five_species[order(top_five_species$n),]
+
+top_five_species <- top_five_species[c(20:24),]
+
+#RM, DO, PB, PP, DM
+
+top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% filter(!is.na(weight)) %>% filter(!is.na(hindfoot_length)) 
+
+top_five_species <- top_five_species %>% filter(species_id %in% c("RM", "DO", "PB", "PP", "DM"))
+
+top_five_species$species_id <- as.character(top_five_species$species_id)
+
+
+a1 <- top_five_species %>% group_by(species_id) %>% summarise(mean_hindfoot = round(mean(hindfoot_length),digits = 2))
+
+a2 <- top_five_species %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight), digits = 2))
+
+a1$mean_weight <- a2$mean_weight  
+
+means_for_top_five <- a1
+
+ggplot(data = means_for_top_five, 
+    aes(x=mean_weight, y=mean_hindfoot, color=species_id))+ geom_point() + theme_minimal()
+
+test1 <- glm(mean_weight ~ mean_hindfoot, data = means_for_top_five)
+summary(test1)
+
+test1summary <- summary(test1)
+
+test1summary 
 ```
 
