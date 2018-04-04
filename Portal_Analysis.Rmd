@@ -1,6 +1,6 @@
 ---
-title: "Untitled"
-author: "Kopsco"
+title: "Big Data Analysis R Assignment"
+author: "Kopsco and Ada"
 date: "4/3/2018"
 output:
   pdf_document: default
@@ -24,7 +24,7 @@ surveys <- read_csv("data/portal_data_joined.csv")
 precip <- read_csv("data/portal_precipitation_19801989.csv")
 ```
 
-  The Portal, AZ rodent dataset provides information on all rodents sampled among 24 experimental plots in the Chihuahan Desert between 1977 and 2002. The following plot examines the total number of species over the entire observation time. While there is considerable change in total abundance among years, the most abundant species remained relatively stable. *C. baileyi* and *D. merriami* were the most abundant species present, however C. baileyi population exploded only in the late 1990s as *D. merriami*'s abundance began to decline.
+  The Portal, AZ rodent dataset provides information on all rodents sampled among 24 experimental plots in the Chihuahan Desert between 1977 and 2002. The following plot examines the total number of species over the entire observation time. While there is considerable change in total abundance among years, the most abundant species remained relatively stable. *C. baileyi* and *D. merriami* were the most abundant species present, however *C. baileyi* population exploded only in the late 1990s as *D. merriami*'s abundance began to decline.
   
 ```{r echo=FALSE}
 total_ann_abund_spp <-surveys %>%
