@@ -3,17 +3,15 @@ title: "Untitled"
 author: "Kopsco"
 date: "4/3/2018"
 output:
-  html_document: default
   pdf_document: default
-editor_options:
-  chunk_output_type: console
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(include = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
 library(tidyverse)
 library(dbplyr)
 library(ggplot2)
@@ -66,7 +64,7 @@ ggplot(data = mean_yearly_abund_spp, aes(x = year, y = mean_abundance_yr)) +
 
 Most plots appear to contain fewer than 60 individuals of a particular species each year. However, *C. baileyi* and *D. merriami* exceed this threshold in several plots in various years. In particular, plot 4 had a surge of *D. merriami* in 1990, and *C. baileyi* increased in the late 1990s in plots 3, 6, 13, 18, 19, 20, 21, 22.
 
-```{r echo=FALSE}
+```{r echo=FALSE, warning=FALSE}
 spabplot <- surveys %>%
   group_by(species, plot_id, year) %>%
   tally()
@@ -128,7 +126,7 @@ kruskal.test(species ~ plot_id, data = sp_abund)
 
 *C. baileyi* and *D. merriami* are the most abundant species for all experimental plots, but there is a lot of variance in their sample numbers throughout the years.
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 
 most_abundant_species <- surveys %>%
     group_by(species, year, plot_id) %>%
