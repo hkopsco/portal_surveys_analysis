@@ -215,6 +215,8 @@ p1 <- ggplot(all_weights, aes(x=species_id, y=weight, col = species_id)) + geom_
 p1
 ```
 
+This box-plot illustrates mean weights for each species in the survey data.
+
 Summary the mean weights per species:
 ```{r}
 mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
@@ -253,7 +255,10 @@ p2 <- ggplot(data = means_for_top_five,
 p2
 ```
 
-Summary of the relatinship between species' mean weight between mean hindfoot length:
+
+This plot shows first five most abundant species and their mean weight vs. mean hindfoot lenghts.    
+
+Summary of the relationship between species' mean weight between mean hindfoot length:
 
 ```{r}
 test1 <- glm(mean_weight ~ mean_hindfoot, data = means_for_top_five)
