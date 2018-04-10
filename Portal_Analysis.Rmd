@@ -202,6 +202,8 @@ p1 <- ggplot(all_weights, aes(x=species_id, y=weight, col = species_id)) + geom_
 p1
 ```
 
+## `r p1`
+
 This box-plot illustrates mean weights for each species in the survey data.
 
 Summary the mean weights per species:
