@@ -37,7 +37,7 @@ top_species <- total_ann_abund_spp %>%
               arrange(desc(n))
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(data = total_ann_abund_spp, aes(x = year, y = n, color = species)) +
      geom_line() + theme(axis.text.x = element_text(colour = "grey20", size = 9, angle = 90, hjust =      0.5, vjust = 0.5),axis.text.y = element_text(colour = "grey20", size = 10),
      text=element_text(size = 10))+
@@ -56,7 +56,7 @@ mean_yearly_abund_spp <-surveys %>%
 summary(mean_yearly_abund_spp)
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(data = mean_yearly_abund_spp, aes(x = year, y = mean_abundance_yr)) +
      geom_line() + theme(axis.text.x = element_text(colour = "grey20", size = 9, angle = 90, hjust =      0.5, vjust = 0.5),axis.text.y = element_text(colour = "grey20", size = 10),
      text=element_text(size = 14))+
@@ -73,7 +73,7 @@ spabplot <- surveys %>%
   tally()
 ```
 
-```{r}
+```{r echo=FALSE}
 plot <- ggplot(data = spabplot, aes(x = year, y = n, color = species)) +
      geom_line() +
      facet_wrap(~ plot_id)+ theme(axis.text.x = element_text(colour = "grey20", size = 7, angle = 90,
@@ -87,7 +87,7 @@ plot
 
 Plot 4 appears to host the largest abundance of species of all plots. 
 
-```{r}
+```{r echo=FALSE}
 
 plot_count_yr <- surveys %>%
                  group_by(year, species, plot_id) %>%
@@ -118,7 +118,7 @@ mean_abund <- sp_abund %>%
               summarise(mean_abund = mean(total_abundance))
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
     geom_boxplot(coef = 1.5) + theme(axis.text.x = element_text(colour = "grey20", size = 12, angle =     90, hjust = 0.5, vjust = 0.5), axis.text.y = element_text(colour = "grey20", size = 12),
     text=element_text(size = 14)) +
@@ -142,7 +142,7 @@ most_abundant_species <- surveys %>%
     filter(n > 50) 
 ```
 
-```{r}
+```{r echo=FALSE}
 ggplot(data = most_abundant_species, aes(x = year, y = n, color = species)) +
     geom_line() +
     facet_wrap(~ plot_id) +
@@ -184,17 +184,17 @@ precip_survey <- merge(count_spp_yr, precip_yr)
 abund_precip = glm(n ~ precipitation, family="poisson", data=precip_survey)
 ```
 
-```{r}
+```{r include=FALSE}
 summary(abund_precip)
 ```
 
-```{r}
+```{r echo=FALSE}
 plot(abund_precip)
 ```
 
 Using a Kruskal Wallace test to compare the amount of precipitation per year, there is no significant difference among sampling years (p = 'r kruskal.test(precipitation ~ year, data = precip_survey)'). This suggests that annual precipitation is not behind the difference in rodent population abundance. 
 
-```{r}
+```{r include=FALSE}
 
 summary(precip_yr)
 kruskal.test(precipitation ~ year, data = precip_survey)
