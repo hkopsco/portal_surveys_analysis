@@ -104,12 +104,6 @@ ggplot(data = plot_count_yr, aes(x = year, y = n)) +
          y = "Number of species") 
 ```
 
-```{r ktest include=FALSE}
-ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
-```
-
-A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 'r ktest1$p.value' ).
-
 ```{r include = FALSE}
 
 sp_abund <- surveys %>%
@@ -120,9 +114,13 @@ mean_abund <- sp_abund %>%
               group_by(plot_id, year) %>%
               summarise(total_abundance = sum(n)) %>%
               summarise(mean_abund = mean(total_abundance))
-
-
 ```
+
+```{r ktest include=FALSE}
+ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
+```
+
+A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 'r ktest1$p.value' ).
 
 ```{r echo=FALSE}
 ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
@@ -132,7 +130,6 @@ ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
     labs(title = "Species abundance by experimental plot",
          x = "Plot Number",
          y = "Number of species")
-  
 ```
 
 Of the top five most abundant species, *C. baileyi* and *D. merriami* are the most abundant for all experimental plots. However, there is a lot of variance in their sample numbers throughout the years.
