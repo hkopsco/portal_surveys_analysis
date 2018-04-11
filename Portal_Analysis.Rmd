@@ -104,7 +104,11 @@ ggplot(data = plot_count_yr, aes(x = year, y = n)) +
          y = "Number of species") 
 ```
 
-A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 'r kruskal.test(species ~ plot_id, data = sp_abund)' ).
+```{r ktest include=FALSE}
+ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
+```
+
+A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 'r ktest1$p.value' ).
 
 ```{r include = FALSE}
 
@@ -116,6 +120,8 @@ mean_abund <- sp_abund %>%
               group_by(plot_id, year) %>%
               summarise(total_abundance = sum(n)) %>%
               summarise(mean_abund = mean(total_abundance))
+
+
 ```
 
 ```{r echo=FALSE}
@@ -126,8 +132,6 @@ ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
     labs(title = "Species abundance by experimental plot",
          x = "Plot Number",
          y = "Number of species")
-
-kruskal.test(species ~ plot_id, data = sp_abund)
   
 ```
 
@@ -163,7 +167,7 @@ ggplot(data = most_abundant_species, aes(x = species, y = n, group = species)) +
 
 ```
 
-Despite differences in plot abundance and overall abundance throughout the study period, there does not appear to be a significant relationship between the annual species abundance and the annual precipitation from 1980-1989 ( p = 'r abund_precip'). Other factors need to be investigated to understand the difference in population dynamics occurring within the plot structure. 
+Despite differences in plot abundance and overall abundance throughout the study period, there does not appear to be a significant relationship between the annual species abundance and the annual precipitation from 1980-1989 ( p = 'r abund_precip_sum$coefficients'). Other factors need to be investigated to understand the difference in population dynamics occurring within the plot structure. 
 
 ```{r include = FALSE}
 
@@ -180,8 +184,11 @@ precip_yr <- precip %>%
             tally()
 
 precip_survey <- merge(count_spp_yr, precip_yr) 
+```
 
+```{r include = FALSE}
 abund_precip = glm(n ~ precipitation, family="poisson", data=precip_survey)
+abund_precip_sum = summary(abund_precip)
 ```
 
 ```{r include=FALSE}
@@ -192,12 +199,15 @@ summary(abund_precip)
 plot(abund_precip)
 ```
 
-Using a Kruskal Wallace test to compare the amount of precipitation per year, there is no significant difference among sampling years (p = 'r kruskal.test(precipitation ~ year, data = precip_survey)'). This suggests that annual precipitation is not behind the difference in rodent population abundance. 
+```{r include = FALSE}
+ktest2 <- kruskal.test(precipitation ~ year, data = precip_survey)
+```
+
+Using a Kruskal Wallace test to compare the amount of precipitation per year, there is no significant difference among sampling years (p = 'r ktest2$p.value'). This suggests that annual precipitation is not behind the difference in rodent population abundance. 
 
 ```{r include=FALSE}
 
 summary(precip_yr)
-kruskal.test(precipitation ~ year, data = precip_survey)
 
 ```
 
