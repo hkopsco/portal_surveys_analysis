@@ -104,7 +104,7 @@ ggplot(data = plot_count_yr, aes(x = year, y = n)) +
          y = "Number of species") 
 ```
 
-```{r ktest include=FALSE}
+```{r ktest, include = FALSE}
 ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
 ```
 
