@@ -8,7 +8,7 @@ output:
 ---
 
 ```{r setup, include=TRUE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
@@ -104,12 +104,6 @@ ggplot(data = plot_count_yr, aes(x = year, y = n)) +
          y = "Number of species") 
 ```
 
-```{r ktest, include = FALSE}
-ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
-```
-
-A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = 'r ktest1$p.value' ).
-
 ```{r include = FALSE}
 
 sp_abund <- surveys %>%
@@ -120,9 +114,13 @@ mean_abund <- sp_abund %>%
               group_by(plot_id, year) %>%
               summarise(total_abundance = sum(n)) %>%
               summarise(mean_abund = mean(total_abundance))
-
-
 ```
+
+```{r include=FALSE}
+ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
+```
+
+A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = `r ktest1$p.value`).
 
 ```{r echo=FALSE}
 ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
@@ -132,7 +130,6 @@ ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
     labs(title = "Species abundance by experimental plot",
          x = "Plot Number",
          y = "Number of species")
-  
 ```
 
 Of the top five most abundant species, *C. baileyi* and *D. merriami* are the most abundant for all experimental plots. However, there is a lot of variance in their sample numbers throughout the years.
@@ -205,7 +202,7 @@ ktest2 <- kruskal.test(precipitation ~ year, data = precip_survey)
 
 Using a Kruskal Wallace test to compare the amount of precipitation per year, there is no significant difference among sampling years (p = 'r ktest2$p.value'). This suggests that annual precipitation is not behind the difference in rodent population abundance. 
 
-```{r include=FALSE}
+```{r echo=FALSE}
 
 summary(precip_yr)
 
@@ -214,7 +211,7 @@ summary(precip_yr)
 
 Average weight per species:
 
-```{r}
+```{r echo=FALSE}
 
 clean_weight <- surveys %>% filter(!is.na(weight))
 
@@ -228,7 +225,7 @@ p1
 This box-plot illustrates mean weights for each species in the survey data.
 
 Summary the mean weights per species:
-```{r}
+```{r echo=FALSE}
 mean_weights_per_species <- clean_weight %>% select(weight, species_id) %>% group_by(species_id) %>% summarise(mean_weight = round(mean(weight),digits = 2))
 
 mean_weights_per_species
@@ -236,7 +233,7 @@ mean_weights_per_species
 
 We choose top five most abundant species and compare mean hindfoot length and weight.
 
-```{r}
+```{r echo=FALSE}
 top_five_species <- surveys %>% select(species_id, hindfoot_length, weight) %>% filter(!is.na(weight)) %>% filter(!is.na(hindfoot_length)) %>% group_by(species_id) %>% tally()
 
 top_five_species <- top_five_species[order(top_five_species$n),]
@@ -270,13 +267,16 @@ This plot shows first five most abundant species and their mean weight vs. mean 
 
 Summary of the relationship between species' mean weight between mean hindfoot length:
 
-```{r}
+```{r echo=FALSE}
 test1 <- glm(mean_weight ~ mean_hindfoot, data = means_for_top_five)
 
 test1summary <- summary(test1)
 
-test1summary 
+test1summary
+
+ktest2 = kruskal.test(mean_weight ~ mean_hindfoot, data = means_for_top_five)
+
 ```
 
-There is not significant relationship between species' mean weight between mean hindfoot length (p = 0.00335).
+There is not significant relationship between species' mean weight between mean hindfoot length (p = `r ktest2$p.value`).
 
