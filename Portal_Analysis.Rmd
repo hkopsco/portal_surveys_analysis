@@ -3,8 +3,8 @@ title: "Big Data Analysis R Assignment"
 author: "Kopsco and Ada"
 date: "4/3/2018"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=TRUE}
