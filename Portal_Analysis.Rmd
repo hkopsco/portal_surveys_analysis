@@ -120,9 +120,9 @@ mean_abund <- sp_abund %>%
 ktest1 = kruskal.test(species ~ plot_id, data = sp_abund)
 ```
 
-A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = \r ktest1$p.value\).
+A boxplot of the mean abundance per experimental plot reveals a large number of outliers. A Kruskal-Wallis one way test of variance reveals that there is a significant difference among the mean species abundances per plot_id (p = `r ktest1$p.value`).
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
     geom_boxplot(coef = 1.5) + theme(axis.text.x = element_text(colour = "grey20", size = 12, angle =     90, hjust = 0.5, vjust = 0.5), axis.text.y = element_text(colour = "grey20", size = 12),
     text=element_text(size = 14)) +
@@ -134,7 +134,7 @@ ggplot(data = sp_abund, aes(x = plot_id, y = n, group = plot_id)) +
 
 Of the top five most abundant species, *C. baileyi* and *D. merriami* are the most abundant for all experimental plots. However, there is a lot of variance in their sample numbers throughout the years.
 
-```{r include = FALSE}
+```{r echo=FALSE, message=FALSE}
 
 most_abundant_species <- surveys %>%
     group_by(species, year, plot_id) %>%
@@ -143,7 +143,7 @@ most_abundant_species <- surveys %>%
     filter(n > 50) 
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(data = most_abundant_species, aes(x = year, y = n, color = species)) +
     geom_line() +
     facet_wrap(~ plot_id) +
@@ -194,13 +194,13 @@ summary(abund_precip)
 plot(abund_precip)
 ```
 
-Despite differences in plot abundance and overall abundance throughout the study period, there does not appear to be a significant relationship between the annual species abundance and the annual precipitation from 1980-1989 ( p = \r abund_precip_sum$coefficients\). Other factors need to be investigated to understand the difference in population dynamics occurring within the plot structure.
+Despite differences in plot abundance and overall abundance throughout the study period, there does not appear to be a significant relationship between the annual species abundance and the annual precipitation from 1980-1989 ( p = `r abund_precip_sum$coefficients`). Other factors need to be investigated to understand the difference in population dynamics occurring within the plot structure.
 
 ```{r include = FALSE}
 ktest2 <- kruskal.test(precipitation ~ year, data = precip_survey)
 ```
 
-Using a Kruskal Wallace test to compare the amount of precipitation per year, there is no significant difference among sampling years (p = \r ktest2$p.value\). This suggests that annual precipitation is not behind the difference in rodent population abundance. 
+Using a Kruskal Wallace test to compare the amount of precipitation per year, there is no significant difference among sampling years (p = `r ktest2$p.value`). This suggests that annual precipitation is not behind the difference in rodent population abundance. 
 
 ```{r echo=FALSE}
 
@@ -259,11 +259,13 @@ means_for_top_five <- a1
 p2 <- ggplot(data = means_for_top_five, 
     aes(x=mean_weight, y=mean_hindfoot, color=species_id))+ geom_point() + theme_minimal()
 
+ktest3 <- kruskal.test(mean_weight ~ mean_hindfoot, data = means_for_top_five)
+
 p2
 ```
 
+This plot shows first five most abundant species and their mean weight vs. mean hindfoot lenghts. According to plot, species' mean weights and hindfoot lenghts looks correlated. To test this correlation we did Kruskal-Wallis one way test. As a result, we saw a significant relationship between species' mean weight between mean hindfoot length (p = `r ktest3$p.value`).
 
-This plot shows first five most abundant species and their mean weight vs. mean hindfoot lenghts.    
 
 Summary of the relationship between species' mean weight between mean hindfoot length:
 
@@ -274,8 +276,8 @@ test1summary <- summary(test1)
 
 test1summary
 
-ktest2 = kruskal.test(mean_weight ~ mean_hindfoot, data = means_for_top_five)
-
 ```
 
-There is a significant relationship between species' mean weight between mean hindfoot length (p = \r test1$p.value\).
+
+
+
